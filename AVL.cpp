@@ -24,7 +24,7 @@ int height(Node* root) {
     if (root == NULL) return 0;
     int heightL = height(root->left);
     int heightR = height(root->right);
-    return max(heightL, heightR) + 1;
+    return 1 + max(heightL, heightR);
 }
 
 void LeftR(Node* &root) {
@@ -44,39 +44,28 @@ void RightR(Node* &root) {
 void balance(Node* &root) {
     if(root == NULL) return;
     int h = height(root->left) - height(root->right);
-    cout << "Balancing at: " << root->key << endl;
 
     if(h > 1) {
-        cout << "Balance case: ";
         // Left - Left
-        if(height(root->left->left) > height(root->left->right)) {
-            cout << "LL" << endl;
+        if(height(root->left->left) >= height(root->left->right)) {
             RightR(root);
         }
         // Left - Right
         else if(height(root->left->left) < height(root->left->right)) {
-            cout << "LR" << endl;
             LeftR(root->left);
             RightR(root);
         }
     }else if (h < -1) {
-        cout << "Balance case: ";
         // Right - Right
-        if(height(root->right->right) > height(root->right->left)) {
-            cout << "RR" << endl;
+        if(height(root->right->right) >= height(root->right->left)) {
             LeftR(root);
         }
         // Right - Left
         else if(height(root->right->right) < height(root->right->left)) {
-            cout << "RL" << endl;
             RightR(root->right);
             LeftR(root);
         }
-    } else {
-        cout << "Already balanced" << endl;
-        return;
     }
-    cout << "Balanced" << endl;
 }
 
 void insertAVL(Node* &root, int key) {
@@ -114,8 +103,6 @@ Node* findMaxNode(Node* root) {
 
 void remove(Node* &root, int key) {
     if(root == NULL) return;
-    cout << "Root key: " << root->key << endl;
-    cout << "Key: " << key << endl;
 
     if(key < root->key) remove(root->left, key);
     else if (key > root->key) remove(root->right, key);
@@ -123,8 +110,8 @@ void remove(Node* &root, int key) {
         if(root->left == NULL && root->right == NULL) {
             delete root;
             root = NULL;
+            return;
         }else if (root->left && root->right) {
-            cout << "Two child" << endl;
             Node* maxNode = findMaxNode(root->left);
             root->key = maxNode->key;
             remove(root->left, maxNode->key);
@@ -135,6 +122,7 @@ void remove(Node* &root, int key) {
             delete temp;
         }
     }
+    
     balance(root);
 }
 
@@ -160,7 +148,7 @@ bool isAVL(Node* root) {
 }
 
 void NLR(Node* root) {
-    if(root == NULL) return;
+    if(!root) return;
 
     cout << root->key << " ";
     NLR(root->left);

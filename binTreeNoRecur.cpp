@@ -148,7 +148,7 @@ void remove(Node* &root, int key) {
 
         Node* maxNode = findMaxNode(curr->left);
         int val = maxNode->key;
-        remove(root, maxNode->key);//hmmm this is still recursion
+        remove(root, maxNode->key);//hmmm is this still recursion?
         curr->key = val;
     }//Case 3: One child
     else {
@@ -164,6 +164,19 @@ void remove(Node* &root, int key) {
     }
 }
 
+void levelOrder(Node* root) {
+    if(root == nullptr) return;
+    queue<Node*> q;
+    q.push(root);
+    while(!q.empty()) {
+        Node* p = q.front();
+        q.pop();
+        cout << p->key << " ";
+        if(p->left) q.push(p->left);
+        if(p->right) q.push(p->right);
+    }
+}
+
 int main() {
     vector<int> a = {3, 4, 8, 1, 9, 5, 2, 0, -1};
     Node* root = createTree(a, a.size());
@@ -174,8 +187,11 @@ int main() {
     // cout << endl;
     // LRN(root);//-1 0 2 1 5 9 8 4 3 
     // cout << endl;
+    levelOrder(root);
+    cout << endl;
     // cout << search(root, 8)->left->key << endl;
-    // remove(root, 3);
+    remove(root, 0);
+    levelOrder(root);
     // LNR(root);
 
 

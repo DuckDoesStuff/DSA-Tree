@@ -1,6 +1,7 @@
 #include<iostream>
 #include<vector>
 #include<queue>
+#include<stack>
 
 using namespace std;
 
@@ -207,6 +208,63 @@ void LRN(Node* root) {
     cout << root->key << " ";
 }
 
+void RightR(Node* &root) {
+    Node* p = root->left;
+    root->left = p->right;
+    p->right = root;
+    root = p;
+}
+
+void LeftR(Node* &root) {
+    Node* p = root->right;
+    root->right = p->left;
+    p->left = root;
+    root = p;
+}
+
+void balance(Node* &root) {
+    if (!root) return;
+    int h = height(root->left) - height(root->right);
+
+    if(h > 1) {
+        if(height(root->left->left) > height(root->left->right))
+            RightR(root);
+        if(height(root->left->left) < height(root->left->right)) {
+            LeftR(root->left);
+            RightR(root);
+        }
+    }
+    if(h < 1) {
+        if(height(root->right->right) > height(root->right->left))
+            LeftR(root);
+        if(height(root->right->right) < height(root->right->left)) {
+            RightR(root->right);
+            LeftR(root);
+        }
+    }
+}
+
+Node* createTreeFromPre(vector<int> pre, int n) {
+    Node* root = createNode(pre[0]);
+    Node* curr = root;
+    stack<Node*> s;
+    for(int i = 1; i < n; i++) {
+        if(pre[i] < curr->key) {
+            curr->left = createNode(pre[i]);
+            s.push(curr);
+            curr = curr->left;
+        }else {
+            while(!s.empty() && pre[i] > s.top()->key) {
+                curr = s.top();
+                s.pop();
+            }
+            curr->right = createNode(pre[i]);
+            curr = curr->right;
+        }
+    }
+    return root;
+}
+
 int main() {
     vector<int> a = {3, 4, 8, 1, 9, 5, 2, 0, -1};
     // vector<int> a = {1, 0, 3, -1};
@@ -214,12 +272,21 @@ int main() {
 
     // LNR(root1);
     // cout << endl;
-    // NLR(root1);
-    // cout << endl;
-    // LRN(root1);
-    // cout << endl;
+    NLR(root1);
+    cout << endl;
     levelOrder(root1);
     cout << endl;
+
+    vector<int> pre = {3, 1, 0, -1, 2, 4, 8, 5, 9};
+    Node* root2 = createTreeFromPre(pre, pre.size());
+    NLR(root2);
+    cout << endl;
+    levelOrder(root2);
+    cout << endl;
+    // LRN(root1);
+    // cout << endl;
+    // levelOrder(root1);
+    // cout << endl;
     
     // cout << endl;
     // vector<int> b = {2, 3, 4, 5};
@@ -230,8 +297,6 @@ int main() {
     // cout << heightNode(root, 8) << endl;
     // cout << height(root) << endl;
     // cout << search(root1, 8)->left->key << endl;
-    remove(root1, 3);
-    levelOrder(root1);
     
     return 0;
 }
